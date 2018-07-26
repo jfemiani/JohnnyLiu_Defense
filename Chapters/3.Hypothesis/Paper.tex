@@ -56,10 +56,10 @@ We aim to estimate parameters $\theta$ that maximize the likelihood of our \text
 \end{figure}
 
 We do not in general have a reliable estimate for the initial radius of our ribbon, 
-but we can construct a trimap (\figref{fig:ribbon_3d_2}, bottom), as is done by \GrabCut{}, in order to estimate $\theta$. We choose a distance $\MaxDistance$ and numbers $\MinRadius < \MaxRadius$ 
+but we can construct a trimap (\figref{fig:ribbon_3d}, bottom), as is done by \GrabCut{}, in order to estimate $\theta$. We choose a distance $\MaxDistance$ and numbers $\MinRadius < \MaxRadius$ 
 so that all pixels with a distance of $[0, \MinRadius)$ are likely part of the ribbon (positive), all pixels within a distance of $[\MinRadius, \MaxRadius)$ are unknown, and others are are assumed not to be part of the ribbon (negative); 
 In our experiments we chose  $\MaxRadius$ as twice the expected mean width of ribbons (e.g. 2 meters), $\MinRadius = \MaxRadius/2$, and $\MaxDistance=\MaxRadius+\MinRadius$.  
-In figure \ref{fig:ribbon_3d_2} these regions correspond to strips of pixels in $\RibbonImage{}$ along the edges and center of the image.
+In figure \ref{fig:ribbon_3d} these regions correspond to strips of pixels in $\RibbonImage{}$ along the edges and center of the image.
 
 % \begin{figure}[h!]
 %     \centering
@@ -79,13 +79,6 @@ The resulting probabilities are illustrated in \figref{fig:GMM_result_2}; we obs
 
 
 \section{A Dynamic Programming Algorithm}
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\columnwidth]{Figures/ribbon-3d-combined.pdf}
-    \caption[3D Ribbon Image 2]{An illustration of the parameters for a ribbon: (top) the $k$ axis captures the thickness of the ribbon and the $i$ axis captures the distance along the initial ribbon, the $j$ axis records horizontal displacements from the initial ribbon's medial curve; (bottom) the boundaries of the ribbon must lie within $\pm \MaxDistance{}$, pixels within $\pm \MinRadius{}$ of the center are probably part of the ribbon and pixels further than $\pm \MaxRadius{}$ are likely negative. }
-    \label{fig:ribbon_3d_2}
-\end{figure}
 
 We take $\RibbonImage{}$ as an input ribbon image with $m$ rows and $n=2\MaxDistance+1$ columns; $\RibbonImage{}{[i,j]}$ is a pixel in the image. We have an estimate $\Pr(\text{pos}|\RibbonImage{}_{[i,j]}, \theta)$ which we abbreviate as $p_{[i,j]})$. In addition there is some small set of allowed perturbations $\delta=\{(\delta_j, \delta_k)\}$ where $\delta_j$ is a change in direction and $\delta_k$ is a change in the radius of the ribbon. Each perturbation has a probability $\Pr(\delta_j, \delta_k)$ that controls the shape of the curve; in our experiments we use $\delta_j\in\{-1,0,1\}, \delta_k\in\{-1, 0,1\}$ in order to ensure that results are connected, and  $\Pr(\delta_j, \delta_k)=\Pr(|\delta_j|)\Pr(\delta_k)$ is two independent multinomial distributions which require only three parameters due to symmetry and because probabilities sum to unity. We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bending the curve, and $c_\mathit{shrink}=-\lg \Pr(\delta_k=-1)$ as a penalty for shrinking the radius, or $c_\mathit{expand} = -\lg \Pr(\delta_k=1)$ as a penalty for expanding the radius of the curve. 
 

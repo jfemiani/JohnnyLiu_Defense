@@ -2,10 +2,17 @@
 
 We import LiDAR data and shape-file that contain geometric information of the location for each sidewalk. Instead of analysis the texture difference between desire sidewalk and non-sidewalk feature, we treat it as the ribbon-like feature and try to segment them base on their growth from start point. 
 
-\begin{figure}[H]
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth]{Figures/ribbon-3d.pdf}
+%     \caption[3D Ribbon Image]{An illustration of the parameters for a ribbon; the $r$ axis captures the thickness of the ribbon and the $s$ axis captures the distance along the initial ribbon. The $t$ axis records horizontal displacements from the initial ribbon's medial curve.}
+%     \label{fig:ribbon_3d}
+% \end{figure}
+
+\begin{figure}[htb]
     \centering
-    \includegraphics[width=\textwidth]{Figures/ribbon-3d.pdf}
-    \caption[3D Ribbon Image]{An illustration of the parameters for a ribbon; the $r$ axis captures the thickness of the ribbon and the $s$ axis captures the distance along the initial ribbon. The $t$ axis records horizontal displacements from the initial ribbon's medial curve.}
+    \includegraphics[width=0.95\columnwidth]{Figures/ribbon-3d-combined.pdf}
+    \caption[3D Ribbon Image]{An illustration of the parameters for a ribbon: (top) the $k$ axis captures the thickness of the ribbon and the $i$ axis captures the distance along the initial ribbon, the $j$ axis records horizontal displacements from the initial ribbon's medial curve; (bottom) the boundaries of the ribbon must lie within $\pm \MaxDistance{}$, pixels within $\pm \MinRadius{}$ of the center are probably part of the ribbon and pixels further than $\pm \MaxRadius{}$ are likely negative. }
     \label{fig:ribbon_3d}
 \end{figure}
 
