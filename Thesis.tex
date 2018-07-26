@@ -1,0 +1,188 @@
+\documentclass[12pt, oneside]{book2}
+\usepackage{amssymb, amsmath, amscd, graphicx, fullpage, epstopdf, appendix, hyperref, color, subfig, setspace, tensor, url, verbatim}
+\usepackage{lipsum}
+\usepackage{todonotes}
+\usepackage{clrscode3e}
+\usepackage{amsmath}
+\usepackage{todonotes}
+\usepackage{acronym}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{lineno}
+\usepackage{xspace}
+%\usepackage{algorithm}
+% \usepackage{algpseudocode}
+\usepackage{natbib}
+\usepackage{float}
+
+\def\figref#1{Figure~\ref{#1}}
+
+\def\vec#1{\ensuremath{\mathbf{#1}}}
+\def\InputImage{\ensuremath\vec{X}}
+\def\RibbonImage{\ensuremath\vec{W}}
+\def\InputTrajectory{\vec{P}}
+\def\OutputTrajectory{T}
+\def\OutputRadius{R}
+
+\def\MaxRadius{k_f}   % Maximum radius of the ribbon (est)
+\def\MinRadius{k_n}   % Minimum radius of the ribbin (est)
+\def\MaxDistance{k_W} % Maximim distance from the center of the ribbin (n = 2*\MaxDistance + 1)
+
+\def\GrabCut{GrabCut}
+\def\ActiveContours{Active Contours}
+
+% Suppress warnings that we don't care about so that we can focus on the ones that matter
+\usepackage{silence}
+\WarningFilter{latex}{Marginpar on page}  % Caused by margin notes / tracking changes
+
+% Used to keep track of changes that are suggested
+\usepackage[margins]{trackchanges}
+%   \note[editor]{The note}
+% \annote[editor]{Text to annotate}{The note}
+%    \add[editor]{Text to add}
+% \remove[editor]{Text to remove}
+% \change[editor]{Text to remove}{Text to add} 
+% \addeditor{editor one}
+\addeditor{JCF}
+
+
+\input{acronyms.tex}
+\input{macros.tex}
+
+\hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black, urlcolor=black, linktocpage}
+
+
+\onehalfspacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Fill in these details
+%\title{ A Dynamic Programming Approach for Segmenting Ribbon-Like Feature}
+\title{FINE SCALE REGISTRATION OF SIDEWALKS AND OTHER RIBBON-LIKE FEATURES FROM AERIAL IMAGERY}
+
+\author{Zhongyu(Johnny) Liu}
+\def\Advisor{John C. Femiani}
+\def\ReaderOne{Eric Bachmann}
+\def\ReaderTwo{Matthew Stephan}
+
+\def\Abstract{
+
+    We present a novel approach for segmenting ribbon-like features, such as sidewalks, With the only knowledge of the approximate locations and thicknesses of thin features, this approach can register coarsely digitized footways to high-resolution aerial imagery with high accuracy. The key innovation is a dynamic-programming solution to search for the optimal set of thicknesses and offsets to an initial path. The method provides control over the rate of change of thickness and direction, and it does not rely on prior knowledge of the materials in the image. The approach will be helpful as an aid to digitization, and downstream applications such as registration of walking paths, canals, or roadways as well as for damage and change detection. 
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\thispagestyle{empty}
+\singlespacing
+
+\begin{center}
+ABSTRACT
+
+\vspace{2.0cm}
+
+\makeatletter
+\MakeUppercase{\@title}
+\makeatother
+
+\vspace{1.0cm}
+
+by \makeatletter\@author\makeatother
+
+
+\vspace{1.0cm}
+\end{center}
+
+\noindent \Abstract{}
+
+\newpage
+
+\thispagestyle{empty}
+
+\frontmatter
+
+\onehalfspacing
+
+\begin{titlepage}
+\begin{center}
+\makeatletter
+\MakeUppercase{\@title}
+\makeatother
+
+\vspace{1.5cm}
+
+A Thesis Defense\\
+
+\vspace{0.5cm}
+
+Submitted to the \\
+Faculty of Miami University \\
+in partial fulfillment of \\
+the requirements for the degree of \\
+Master of Science \\
+Department of Computer Science and Software Engineering \\
+by \\
+\makeatletter\@author\makeatother \\
+Miami University \\
+Oxford, Ohio \\
+\the\year
+
+\vspace{1.5cm}
+
+\emph{Advisor}: \rule[-0.1cm]{8cm}{0.01cm} \\
+(\Advisor) \\
+\vspace{1.5cm}
+\emph{Reader}: \rule[-0.1cm]{8cm}{0.01cm} \\
+(\ReaderOne) \\
+\vspace{1.5cm}
+\emph{Reader}: \rule[-0.1cm]{8cm}{0.01cm} \\
+(\ReaderTwo) \\
+\end{center}
+\end{titlepage}
+
+\if@xetex
+	\cleardoublepage
+	\phantomsection
+\else
+	\ifpdf
+		\cleardoublepage
+		\phantomsection
+	\else
+		\cleardoublepage
+	\fi
+\fi
+
+\setcounter{page}{2}
+\tableofcontents
+\setcounter{tocdepth}{2}
+\listoffigures
+
+\newpage
+
+\begin{center} ACKNOWLEDGEMENTS \end{center}
+
+\noindent I would first like to thank my advisor, Dr. \Advisor{}, for presenting me with this interesting problem full of rich detail, and for many conversations providing critical guidance throughout the project. I also thank him for helping me to grow as an overall student of computer science, during my time as a graduate student. I also thank Dr. \ReaderOne{} and Dr. \ReaderTwo{}, for taking the time to read this thesis and offer their insights, as well as for a great deal of friendly conversation and enjoyable classroom instruction during my time in Oxford. There are countless other faculty members who deserve similar accolades, but the list is too lengthy to be shown here in completion. Last, but certainly not least, I offer a great deal of thanks to my friends and family (again, a list too lengthy to present in this space), without whom I would have lacked crucial support and guidance in finishing this graduate program.
+
+\mainmatter
+
+\include{Chapters/1.Introduction/Introduction}
+\include{Chapters/2.Theory/Background}
+\include{Chapters/2.Theory/Theory}
+\include{Chapters/3.Hypothesis/Hypothesis}
+\include{Chapters/3.Hypothesis/Paper}
+\include{Chapters/4.Expect_results/Results}
+\include{Chapters/5.Conclusion/Conclusion}
+
+% \appendix
+% \include{Appendices/A1}
+% \include{Appendices/A2}
+% \include{Appendices/A3}
+% \include{Appendices/A4}
+
+\backmatter
+
+\bibliographystyle{unsrt}
+\addcontentsline{toc}{chapter}{References}
+\bibliography{Thesis}
+\end{document}
