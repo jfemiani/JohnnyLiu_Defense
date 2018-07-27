@@ -1,18 +1,25 @@
-\chapter{Publication}
+\chapter{Experiment}
 
-The main steps of our approach are illustrated in \figref{fig:Apparatus}; a \ac{VHR} orthorectified image is provided and a the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}. Alternately, an approximate trajectory could be marked by a person to digitize the sidewalk quickly. The initial trajectory is re-sampled and used to warp a portion of aerial image so that the trajectory is mapped to a straight, horizontal line which we call a \textit{ribbon image}.  We use a modest assumption that colors near the center of the ribbon image are more likely to be on a walking path in order to build a probability-density estimate for walking path materials. Based on the probability estimate at each pixel, we construct a single ribbon with priors that control the rate of change of thickness and direction of the ribbon. Finally, the boundaries are warped back onto the original reference frame. In this section we elaborate the process of generating a ribbon image, estimating the probability that a color belongs to the same material as a walking path, and the construction of a smooth ribbon image based on the resulting probabilities. 
+The main steps of our approach are illustrated in \figref{fig:Apparatus}; a \ac{VHR} orthorectified image is provided and a the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}.
+Alternately, an approximate trajectory could be marked by a person to digitize the sidewalk quickly. 
+The initial trajectory is re-sampled and used to warp a portion of aerial image so that the trajectory is mapped to a straight, horizontal line which we call a \textit{ribbon image}. 
+We use a modest assumption that colors near the center of the ribbon image are more likely to be on a walking path in order to build a probability-density estimate for walking path materials. 
+Based on the probability estimate at each pixel, we construct a single ribbon with priors that control the rate of change of thickness and direction of the ribbon. 
+Finally, the boundaries are warped back onto the original reference frame. 
+In this section we elaborate the process of generating a ribbon image, estimating the probability that a color belongs to the same material as a walking path, and the construction of a smooth ribbon image based on the resulting probabilities. 
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.9\textwidth]{Figures/diagram.png}
-\caption[Framework Overview 2]{Our approach adopted to predict precise boundaries for ribbon-like features. Where black line indicated a sidewalk's geometric information, and red lines shown our result for the sidewalk boundaries. From (a) to (f), the 6 step approach introduce input map (a), initial trajectory (b), ribbon image generation (c), density Estimation for pixels(d), apply \ac{DP} solution(e), reshape sidewalk(f).}
+\includegraphics[width=0.8\textwidth]{Figures/diagram6.png}
+\caption[Framework Overview]{Our approach adopted to predict precise boundaries for ribbon-like features. Where black line indicated a sidewalk's geometric information, and red lines shown our result for the sidewalk boundaries. From (a) to (f), the 6 step approach introduce input map (a), initial trajectory (b), ribbon image generation (c), density Estimation for pixels(d), the result from our \ac{DP} solution(e), the output result by reshape sidewalk(f).}
 \label{fig:Apparatus}
 \end{center}
 \end{figure}
 
-\section{Warping an input image}
+\section{Warping an Input Image}
 
-We take as input an image $\InputImage{}$ and a trajectory $\InputTrajectory{}=\langle \vec{p}_0, \vec{p}_1,\dots,\vec{p}_m\rangle$ where each $\vec{p}_i=(x_i, y_i)^T$ is a point on the initial estimate of a ribbons trajectory (re-sampled and smoothed). Further, we are able to estimate unit-length tangent vectors $\vec{u}_i$ and their perpendiculars $\vec{v}_i$; for example by using the secant method 
+We take as input an image $\InputImage{}$ and a trajectory $\InputTrajectory{}=\langle \vec{p}_0, \vec{p}_1,\dots,\vec{p}_m\rangle$ where each $\vec{p}_i=(x_i, y_i)^T$ is a point on the initial estimate of a ribbons trajectory (re-sampled and smoothed). 
+Further, we are able to estimate unit-length tangent vectors $\vec{u}_i$ and their perpendiculars $\vec{v}_i$; for example by using the secant method 
 \begin{align}
   \vec{u}_i &= \frac{\vec{p}_{i+1}-\vec{p}_{i-1}}{\|\vec{p}_{i+1}-\vec{p}_{i-1}\|} \\
   \vec{v}_i &= \left(\begin{array}{cc}
@@ -20,9 +27,12 @@ We take as input an image $\InputImage{}$ and a trajectory $\InputTrajectory{}=\
        -1 & 0
   \end{array} \right) \vec{u}_i
 \end{align}
-where the endpoints are repeated. We define the warped ribbon-image $\RibbonImage{}$ so that $\RibbonImage{[i,j]}=\InputImage{}(\vec{p}_i+ j \vec{v}_i)$. We use the convention that square-brackets to indicate discrete indices and rounded parenthesis indicate interpolated samples.  An example of the process is shown in \figref{fig:Sample_Sidewalk_4} and \figref{fig:Apparatus}(c). 
+where the endpoints are repeated. 
+We define the warped ribbon-image $\RibbonImage{}$ so that $\RibbonImage{[i,j]}=\InputImage{}(\vec{p}_i+ j \vec{v}_i)$. 
+We use the convention that square-brackets to indicate discrete indices and rounded parenthesis indicate interpolated samples. 
+An example of the process is shown in \figref{fig:Sample_Sidewalk_4} and \figref{fig:Apparatus}(c). 
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Figures/Sample4_needed.png}
     \caption[Sample Sidewalk 1]{A ribbon image straighten output which used the previous process from figure \ref{fig:StraightenProcess} to convert an original image into ribbon image .}
@@ -55,9 +65,8 @@ We aim to estimate parameters $\theta$ that maximize the likelihood of our \text
     \label{fig:GMM_result_2}
 \end{figure}
 
-We do not in general have a reliable estimate for the initial radius of our ribbon, 
-but we can construct a trimap (\figref{fig:ribbon_3d}, bottom), as is done by \GrabCut{}, in order to estimate $\theta$. We choose a distance $\MaxDistance$ and numbers $\MinRadius < \MaxRadius$ 
-so that all pixels with a distance of $[0, \MinRadius)$ are likely part of the ribbon (positive), all pixels within a distance of $[\MinRadius, \MaxRadius)$ are unknown, and others are are assumed not to be part of the ribbon (negative); 
+We do not in general have a reliable estimate for the initial radius of our ribbon, but we can construct a trimap (\figref{fig:ribbon_3d}, bottom), as is done by \GrabCut{}, in order to estimate $\theta$. 
+We choose a distance $\MaxDistance$ and numbers $\MinRadius < \MaxRadius$ so that all pixels with a distance of $[0, \MinRadius)$ are likely part of the ribbon (positive), all pixels within a distance of $[\MinRadius, \MaxRadius)$ are unknown, and others are are assumed not to be part of the ribbon (negative);
 In our experiments we chose  $\MaxRadius$ as twice the expected mean width of ribbons (e.g. 2 meters), $\MinRadius = \MaxRadius/2$, and $\MaxDistance=\MaxRadius+\MinRadius$.  
 In figure \ref{fig:ribbon_3d} these regions correspond to strips of pixels in $\RibbonImage{}$ along the edges and center of the image.
 
@@ -75,12 +84,19 @@ $$\Pr(\text{pos}|\phi, \theta)= \frac{\Pr(\phi|\text{pos}, \theta)}{\Pr(\phi|\te
 
 %\FloatBarrier
 
-The resulting probabilities are illustrated in \figref{fig:GMM_result_2}; we observe that even a coarse initial trajectory is usually enough to learn a more detailed, but noisy, estimate for the foreground object shape. However colors alone are not able to discriminate between occlusion and camouflage regions (such as the driveway in \figref{fig:GMM_result}). For rotational convenience we let $p[i,j]=-\lg \Pr(\text{pos}|\RibbonImage{}[i,j], \theta)$ and $q[i,j]=-\lg \Pr(\text{neg}|\RibbonImage{}[i,j], \theta)$; then the \ac{NLL} of a ribbon is proportional to a sum of $p[i,j]$ for all $i,j$ within the ribbon and $q[i,j]$ for all $i,j$ outside the ribbon. The aim of our \ac{DP} solution is to simultaneously optimize the probability based on color and shape of a ribbon-like feature. 
+The resulting probabilities are illustrated in \figref{fig:GMM_result_2}; we observe that even a coarse initial trajectory is usually enough to learn a more detailed, but noisy, estimate for the foreground object shape.
+However colors alone are not able to discriminate between occlusion and camouflage regions (such as the driveway in \figref{fig:GMM_result}). 
+For rotational convenience we let $p[i,j]=-\lg \Pr(\text{pos}|\RibbonImage{}[i,j], \theta)$ and $q[i,j]=-\lg \Pr(\text{neg}|\RibbonImage{}[i,j], \theta)$; then the \ac{NLL} of a ribbon is proportional to a sum of $p[i,j]$ for all $i,j$ within the ribbon and $q[i,j]$ for all $i,j$ outside the ribbon. 
+The aim of our \ac{DP} solution is to simultaneously optimize the probability based on color and shape of a ribbon-like feature. 
 
 
 \section{A Dynamic Programming Algorithm}
 
-We take $\RibbonImage{}$ as an input ribbon image with $m$ rows and $n=2\MaxDistance+1$ columns; $\RibbonImage{}{[i,j]}$ is a pixel in the image. We have an estimate $\Pr(\text{pos}|\RibbonImage{}_{[i,j]}, \theta)$ which we abbreviate as $p_{[i,j]})$. In addition there is some small set of allowed perturbations $\delta=\{(\delta_j, \delta_k)\}$ where $\delta_j$ is a change in direction and $\delta_k$ is a change in the radius of the ribbon. Each perturbation has a probability $\Pr(\delta_j, \delta_k)$ that controls the shape of the curve; in our experiments we use $\delta_j\in\{-1,0,1\}, \delta_k\in\{-1, 0,1\}$ in order to ensure that results are connected, and  $\Pr(\delta_j, \delta_k)=\Pr(|\delta_j|)\Pr(\delta_k)$ is two independent multinomial distributions which require only three parameters due to symmetry and because probabilities sum to unity. We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bending the curve, and $c_\mathit{shrink}=-\lg \Pr(\delta_k=-1)$ as a penalty for shrinking the radius, or $c_\mathit{expand} = -\lg \Pr(\delta_k=1)$ as a penalty for expanding the radius of the curve. 
+We take $\RibbonImage{}$ as an input ribbon image with $m$ rows and $n=2\MaxDistance+1$ columns; $\RibbonImage{}{[i,j]}$ is a pixel in the image. 
+We have an estimate $\Pr(\text{pos}|\RibbonImage{}_{[i,j]}, \theta)$ which we abbreviate as $p_{[i,j]})$. 
+In addition there is some small set of allowed perturbations $\delta=\{(\delta_j, \delta_k)\}$ where $\delta_j$ is a change in direction and $\delta_k$ is a change in the radius of the ribbon. 
+Each perturbation has a probability $\Pr(\delta_j, \delta_k)$ that controls the shape of the curve; in our experiments we use $\delta_j\in\{-1,0,1\}, \delta_k\in\{-1, 0,1\}$ in order to ensure that results are connected, and  $\Pr(\delta_j, \delta_k)=\Pr(|\delta_j|)\Pr(\delta_k)$ is two independent multinomial distributions which require only three parameters due to symmetry and because probabilities sum to unity. 
+We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bending the curve, and $c_\mathit{shrink}=-\lg \Pr(\delta_k=-1)$ as a penalty for shrinking the radius, or $c_\mathit{expand} = -\lg \Pr(\delta_k=1)$ as a penalty for expanding the radius of the curve. 
 
 We visualize the problem of finding a ribbon as one of choosing a three-dimensional path through a scale-space where the first two dimensions represent locations of the ribbon's center, and the third dimension represent the thickness of the ribbon as illustrated in \figref{fig:ribbon_3d}. Every ribbon must start at one end of the image and follow a three-dimensional path through scale-space to reach the other end one slice at a time. Each slice corresponds to a row of the ribbon image and a point at location $(j, k)$ in the slice partitions the row into negative regions $(0\twodots{}j-k-1)$ and $(j+k+1\twodots{}n)$ with a positive region at $(j-k \twodots{} j+k)$ with thickness $2k+1$. The likelihood of any location $(j, k)$ is the product of the probabilities that each pixel on the same row belongs to the corresponding positive or negative regions.  In fact the probability is exponentially related to the size of each pixel; if one were to increase the resolution by a factor of $r$ then the contribution of each pixel would be raised to the power of $\frac{1}{r}$ so that the product would stay constant. In order to make our parameters invariant to scale, we divide the \ac{NLL} by $\MaxDistance{}$ when estimating the likelihood of a given $(j,k)$. 
 

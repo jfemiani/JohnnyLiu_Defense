@@ -1,5 +1,12 @@
 \chapter{Conclusion}
-In this thesis defense, we have investigated a dynamic programming approach to segment sidewalk as a ribbon-like feature. We believe the preliminary result from our hypothesis is decent. During thesis progress, we gain the knowledge on important backgrounds and we study other feature extraction methods. Also, we develop a fully working dynamic programming algorithm with penalty control function to achieve better performance.
+In this thesis defense, a method to estimate the thickness and to refine the trajectory of a ribbon-like feature in \ac{VHR} aeral orthoimagery has been presented. 
+We were able to obtain both high qualitative and quantitative results for segmenting walking paths in aerial imagery by refining \ac{OSM} features. The method is fast, and has only a few parameters with clear interpretations.
+The proposed approach does not rely on extensive training on annotated data, but instead learns to fit the underlying imagery based on a trimap that is specified by parameters $\MinRadius{}, \MaxRadius{}, \MaxDistance{}$ which values that are easily determined based on the task, and are unlikely to require adjustment. 
+
+We evaluated this work by comparing it mainly to approaches for interactive image segmentation. 
+Because most automatic approaches for extracting street-maps focus on extracting coarse trajectories (which we take as input) rather than on precise alignment and width estimation. 
+We focused on modeling footways which are small, thin, easily occluded, and often modified due to construction.
+We believe that this approach is a natural tool to improve segmentation by post-processing automatically extracted street networks, and also by enabling fast interactive annotation of aerial images by refining hand-entered paths such as those found in \ac{OSM}.
 
 \section{Summary}
 Chapter 2 introduces a few important background knowledge for better understanding of this thesis defense. We go through \ac{VHR}, \ac{OSM}\cite{OpenStreetMap}, \ac{CRF}\cite{MAL-013}, \ac{GMM}\cite{sridharan2014gaussian} and \ac{DP}\cite{bellman2013dynamic} to understand the basic of our approach.   
