@@ -31,7 +31,7 @@ We use a secant to estimate the tangent to the curve,
 \[\dot{\mathbf{x}}_s = \left[\begin{array}{c} \dot{x}_s \\ \dot{y}_s \end{array}\right]= \frac{\mathbf{x}_{s+1}-\mathbf{x}_{s-1}}{||\mathbf{x}_{s+1}-\mathbf{x}_{s-1}||} \] and rotate it ninety degrees counter-clockwise in order to find a direction  $\mathbf{n}_s$, so that 
 \[\mathbf{n}_s = \left[\begin{array}{c} -\dot{y}_s \\ \dot{x}_s \end{array}\right]. \]
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Figures/sw-figure.pdf}
     \caption[2D Ribbon Image]{A demonstration of the parameters for a ribbon in 2D. $k_n$ indicates a parameter that describes the radius of the medial curve that we considered to be part of the ribbon, $k_f$ is a distance from the medial curve that we considered very unlikely to be part of the ribbon, and $k_W$ is the maximum width of the ribbon image.}
