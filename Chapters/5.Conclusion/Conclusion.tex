@@ -29,7 +29,7 @@ We produce some failure cases to show what we need to improve for the future wor
     \item Fully blocked sidewalk: \figref{fig:ny_fail_1} shows sample of sidewalks that fully blocked by obstacles, tree crown in our case. Base on the initial trajectory we find from open source, there must be a sidewalk under the tree crown. We count this as 'failure' cases since it's impossible for us to determine the accuracy for our result. 
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.83\textwidth]{Figures/oxford_fail_1.png}
     \caption[Failure Case 1]{Demonstration on failure cases. Due to the fact that road structures may change overtime. It's possible to produce the output with the input map and the initial trajectory within different time stamp. Sample figure shows our approach produce 'incorrect' sidewalk boundaries because the map data is older than the trajectory so we are producing the sidewalk that were not built yet.}
@@ -59,6 +59,13 @@ There's couple more ideas we would like to attempt.
     
     we can use the latitudes and longitudes data to locate a part of a map via Overpass Turbo \cite{overpass_turbo}, it supports features such as sidewalks geometric location since it's connecting with the database from \ac{OSM} \cite{OpenStreetMap}. Also, with the input latitudes and longitudes data, we can extract the map with given range from Google map or other open map source. Then just simply pass in both data set with our approach to generate whole sidewalk information for the whole site. 
     
-    \item We'll give hypothesis to process the intersection area. By identify the point that is overlapped as intersection part (same node in multiple ways), we connect nodes on each way that are adjacent to the point. By extend each path a little bit more into the adjacent path to finish the intersection.
+    \item We'll give hypothesis to process the intersection area. We identify the point that is overlapped as intersection part (same node in multiple ways), we connect nodes on each way that are adjacent to the point. By extend each path a little bit more into the adjacent path to finish the intersection. Figure \ref{fig:intersection} shows the basic idea of our hypothesis, the sidewalk from the left merges into the left. It's connecting the left sidewalk into the right one and processed it as the same part. 
     
 \end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{Figures/intersection.png}
+    \caption[Intersection Demonstration]{A hypothesis demonstration on intersection. By extend each path a little bit more into the next adjacent path, we can connect them we a little 'elbow'.}
+    \label{fig:intersection}
+\end{figure}
