@@ -38,7 +38,7 @@ We use a secant to estimate the tangent to the curve,
     \label{fig:2d_ribbon}
 \end{figure}
 
-As shown in \ref{fig:2d_ribbon}, from figure \ref{fig:osm_oxford_path}, we should assume that there is some uncertainty in the position $\mathbf{x}_s$ of the medial curve and also uncertainty in the radius $r_s$ of the discredited ribbon. 
+As shown in figure \ref{fig:2d_ribbon}, from figure \ref{fig:osm_oxford_path}, we should assume that there is some uncertainty in the position $\mathbf{x}_s$ of the medial curve and also uncertainty in the radius $r_s$ of the discredited ribbon. 
 But that there is range of distances $t \in 0\dots k_n$ from the medial curve which we can accept labeling as positive examples that are within the ribbon, and that there is some range of distances $t \in k_f\dots k_W$ which we can accept labeling as negative sample. 
 Finally a range $t\in (k_n+1)...(k_f-1)$ of distances that are possible locations of the ribbon's boundary.
 Therefore, when searching for improved medial curves and radii of the ribbon, we can consider a discrete range of offsets $t=-k_W,..., k_W$ chosen to be wide enough that true ribbon image itself likely fits entirely within the grid of input negative samples along its edges.  
@@ -46,7 +46,7 @@ Therefore, when searching for improved medial curves and radii of the ribbon, we
 The orthorectified color image $\image(x,y)$
 records the color at the point $x,y$ in the image plane.
 Then $\image(\mathbf{x}_{s,t}),$ is a warped version of the image in which the ribbon is centered on a single strip at $t=0$.
-The situation is illustrated in \ref{fig:ribbon_3d}.  
+The situation is illustrated in figure  \ref{fig:ribbon_3d}.  
 In this warped image, we can estimate the amount $t_s$ to shift the ribbon's center in the $t-$axis, which is orthogonal to the curve,  and also the amount the radius $r_s$ so that the  ribbon at each row is in columns $(t_s - r_s)\dots(t_s+r_s)$.  
 Our problem is to estimate the most likely values of $t_s$ and $r_s$.  
 
@@ -68,7 +68,7 @@ Many of these methods take as input a set of training examples in order to choos
 Our conjecture is that the initial estimate of our sidewalk's mid-line, while perhaps not perfect, is much more likely to cover pixels that are part of a sidewalk than the pixels at the edge of the ribbon image. 
 
 We use this assumption to estimate the probability that a pixel is part of a ribbon conditioned on its color.
-Let $k_n$ be parameter that describes the radius around the medial curve that we will consider to be part of the ribbon with very high confidence. 
+Let $k_n$ be a parameter that describes the radius around the medial curve that we will consider to be part of the ribbon with very high confidence. 
 Let $k_f$ indicate a distance from the medial curve that we consider very unlikely to be part of the ribbon. 
 Finally, let $k_W$ indicate maximum value of $t$ to consider when learning the distribution of colors in a ribbon image. 
 We model the distribution of colors within the sidewalk as a Gaussian Mixture Model of $k_g=4$ full-co-variance gaussian distribution and we model the distribution of colors outside of the ribbon as a mixture $2k_g$ Gaussian since we expect more variation and complexity in this zone. 

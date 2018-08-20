@@ -12,12 +12,12 @@
 \end{figure}
 % \todo{change dpi to 5 meter scale. make it worse.}
 
-\ac{VHR} stands for Very High Resolution, it has advantageous for buildings extraction, road detection or image segmentation~\cite{FREIRE20141, 10.1007/BFb0015525, 10.1007/978-3-642-15567-3_16}. 
-These aerial imageries contain more information and detail due to the higher resolution, which give us the ability to develop more complex analysis on the imagery with same size.
+\ac{VHR} stands for Very High Resolution. It has advantageous for buildings extraction, road detection or image segmentation~\cite{FREIRE20141, 10.1007/BFb0015525, 10.1007/978-3-642-15567-3_16}. 
+These aerial imageries contain more information and detail due to the higher resolution, which gives us the ability to develop more complex analysis on the imagery with same size.
 \figref{fig:vhr_compare} demonstrates the difference between different resolution within the same area. From (a) to (c), the resolution changes from half meter scale to 10 meter scale. 
-With higher resolution, it's easier to find the precious boundaries of an object or identify it. 
+With higher resolution, it is easier to find the precious boundaries of an object or identify it. 
 For building extraction, higher resolution provides more information when dealing with complex houses or extract complex suburban roofs~\cite{10.1007/BFb0015525}. 
-For thin ribbon-features segmentation such as sidewalks in our approach, to visualize an overlaid map without high resolution, the imagery can be distracting, and the output may effect by tiny discrepancies between digitized pathways~\cite{10.1007/978-3-642-15567-3_16}. 
+For thin ribbon-features segmentation such as sidewalks in our approach, to visualize an overlaid map without high resolution, the imagery can be distracting, and the output may be effected by tiny discrepancies between digitized pathways~\cite{10.1007/978-3-642-15567-3_16}. 
 
 \section{\ac{OSM}}
 \begin{figure}[H]
@@ -37,7 +37,7 @@ With all these convenience features, \ac{OSM} is helpful for the map analysis an
 It may also leads to the issue of dealing with missing or invalid data when we rely on the data set for auto-detection, or mismatch data with imagery when structures changes along with time.
 
 \section{\ac{CRF}}
-\ac{CRF} stands for Conditional Random Field, which is a class of statistical modeling method that often applied in pattern recognition and machine learning~\cite{MAL-013}. 
+\ac{CRF} stands for Conditional Random Field, which is a class of statistical modeling methods that often applied in pattern recognition and machine learning~\cite{MAL-013}. 
 As a type of discriminative undirected probabilistic graphical model, \ac{CRF} is commonly used for segmenting, labeling or parsing of sequential data, such as in computer vision, structure segmentation and object recognition~\cite{RuizSarmiento2015UPGMppA, 1315232, lafferty2001conditional}. 
 For road segmentation, several approaches are able to locate the precise boundaries by treating it as a \ac{CRF} problem~\cite{ActiveContou09, Achanta:149300}. 
 
@@ -48,8 +48,8 @@ It is a probabilistic model for representing normally distributed subpopulations
 \ac{GMM} often can be performed when the data points are mixtures of a Gaussian distribution. 
 It can be used in common computer vision tasks such as background and foreground subtraction~\cite{1333992}. 
 For road segmentation, we can treat the problem as subtract foreground (road feature) from the complex background (non-road feature). 
-\figref{fig:gmm_sample_1} demonstrate the comparison between foreground and background \ac{GMM} on sample walking path show in gray-scale. 
-For foreground subtraction, which shown in row 1 and row 3, we treat sidewalk texture as foreground and apply the \ac{GMM} algorithm to subtract it from the background (non-sidewalk texture). 
+\figref{fig:gmm_sample_1} demonstrates the comparison between foreground and background \ac{GMM} on sample walking path show in gray-scale. 
+For foreground subtraction, which we show in row 1 and row 3, we treat sidewalk texture as foreground and apply the \ac{GMM} algorithm to subtract it from the background (non-sidewalk texture). 
 Background subtraction are shown in row 2 and row 4, we did the opposite and treat non-sidewalk part as foreground. 
 
 \begin{figure}[H]
@@ -88,7 +88,7 @@ By trade in linear space to save previous calculation, we can reduce the wrong t
     \centering
     \includegraphics[width=\textwidth]{Figures/treewithdp.png}
     \caption[Demonstration on Fibonacci Sequence]{Representing the calculation of Fibonacci Sequence ($7^{th}$) with binary tree. Row 1 shows without applying dynamic programming, it need's certain exponential rate to calculate $n^{th}$ Fibonacci number. With the increase of $n$, the number of calculation increase significantly. Row 2 shows with dynamic programming, after saving previous calculation, it's only require linear time steps to calculate $n^{th}$ Fibonacci number. We marked unnecessary steps in red X to show it's can be skipped. }
-    % \cite{stack_overflow}
+    \cite{stack_overflow}
     \label{fig:fbs}
 \end{figure}
 

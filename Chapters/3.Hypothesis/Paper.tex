@@ -1,6 +1,6 @@
-\chapter{Experiment}
+\chapter{Detail Experiments on \ac{DPST}}
 
-The main steps of our approach are illustrated in \figref{fig:Apparatus}; a \ac{VHR} orthorectified image is provided and a the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}.
+The main steps of our approach are illustrated in \figref{fig:Apparatus}; a \ac{VHR} orthorectified image is provided by our sponsor and the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}.
 Alternately, an approximate trajectory could be marked by a person to digitize the sidewalk quickly. 
 The initial trajectory is re-sampled and used to warp a portion of aerial image so that the trajectory is mapped to a straight, horizontal line which we call a \textit{ribbon image}. 
 We use a modest assumption that colors near the center of the ribbon image are more likely to be on a walking path in order to build a probability-density estimate for walking path materials. 
@@ -15,6 +15,21 @@ In this section we elaborate the process of generating a ribbon image, estimatin
 \label{fig:Apparatus}
 \end{center}
 \end{figure}
+
+\section{Validate Initial Trajectory}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/arizon_center.png}
+    \caption[Demonstration on Arizona Center]{Detail demonstration on part of Arizona center, all sidewalks' \ac{GIS} information shows in Orange.}
+    \label{fig:arizon_center}
+\end{figure}
+
+Before applying deep learning network to determine sidewalk's location, it's necessary to hand marking all sidewalk from imagery or extract the geometric information of each sidewalk from resources like \ac{OSM}. 
+It's challenging since the geometric accuracy was not precise, which could cause performance issue since we rely on this information to segment the sidewalk part from maps for the next step. 
+To ensure data accuracy, as shows in figure \ref{fig:arizon_center}, we spent days marking all sidewalks and their precise boundaries in Arizona Central for initial experiments. 
+We can locate each sidewalk by using the geometric information and saved them into separate files. 
+We also calculate the average sidewalk width from boundaries to decide reasonable window size in the following step.
 
 \section{Warping an Input Image}
 
@@ -53,6 +68,30 @@ An example of the process is shown in \figref{fig:Sample_Sidewalk_4} and \figref
 %     \label{fig:Sample_Sidewalk_4}
 % \end{figure}
 
+We develop a way to convert the given sidewalk into a ribbon image. 
+As shown in figure \ref{fig:StraightenProcess}, we use the previous outcome (A) from the last step as input and connected all coordinate points data as the mid-line for the sample sidewalk. 
+Then we apply a smooth function that we created to smooth the mid-line, so the shape of mid-line fits better to the actual sidewalk shape(B). 
+We generate two parallel line as offsets on each side of the mid-line with a distance of twice the average width in between. 
+Ideally even the mid-line is not perfectly laying on the middle, we would still fit the whole sidewalk into the ribbon image. 
+For each point on the mid-line, we connect the corresponding points on both offsets to get the movement of the sidewalk and recorded them(C, D), we generate the straightened ribbon image by using the color data from each pixel in the points set that we record earlier(E). 
+The image data in between each offset, with constant image width could be retrieved after that (F).
+Then we reshape the image data to generate the ribbon image(G). 
+Figure \ref{fig:Sample_Sidewalk_2} shows the complete ribbon-image output result on sample sidewalk. We separate it into parts to show better detail. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/straghten.pdf}
+    \caption[Ribbon Image Generation]{Ribbon image generating process: from sub-figures A to G, we showed the step by step process to generate ribbon-image from a partial sidewalk. From raw input (A), we smoothed mid line and generated parallel off-site (B). Generated pixels (C) and connected each pixel to its correspond color data from the raw input (D). After gathered pixel data (E), we removed mid-line (F) and generated the ribbon image(G).}
+    \label{fig:StraightenProcess}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/sample2_demo.png}
+    \caption[Sample Sidewalk 2]{A ribbon image straighten output on sample sidewalk, row 1 shows the original input, row 2 to 5 show the ribbon image output separate into parts.}
+    \label{fig:Sample_Sidewalk_2}
+\end{figure}
+
 \section{Density Estimation}
 We aim to find a new trajectory $\OutputTrajectory{[0\dots m]}$ and radius $\OutputRadius{[0\dots m]}$ that are most likely given an input image. We first must estimate the probability of observing a color within the ribbon.  
 Given an input image $\RibbonImage{}$, let $\Pr(\text{pos}|\phi,\theta)$ denote the probability that a pixel is a part of a ribbon given an observed color $\phi$ and set of learnable parameters $\theta$. 
@@ -60,7 +99,7 @@ We aim to estimate parameters $\theta$ that maximize the likelihood of our \text
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\columnwidth]{Figures/GMM_sample6.png}
+    \includegraphics[width=0.6\columnwidth]{Figures/GMM_sample6.png}
     \caption[\ac{GMM} Result 2]{Example of GMMs on sample sidewalk. Row 1 and 2 shows the foreground GMM for sample sidewalk, and row 3 and 4 shows the back-ground for simple sidewalk. We use grey-scale to show the changes of probabilities, where for foreground, white is more likely to be sidewalk, and black is not.}
     \label{fig:GMM_result_2}
 \end{figure}
@@ -87,7 +126,19 @@ $$\Pr(\text{pos}|\phi, \theta)= \frac{\Pr(\phi|\text{pos}, \theta)}{\Pr(\phi|\te
 The resulting probabilities are illustrated in \figref{fig:GMM_result_2}; we observe that even a coarse initial trajectory is usually enough to learn a more detailed, but noisy, estimate for the foreground object shape.
 However colors alone are not able to discriminate between occlusion and camouflage regions (such as the driveway in \figref{fig:GMM_result}). 
 For rotational convenience we let $p[i,j]=-\lg \Pr(\text{pos}|\RibbonImage{}[i,j], \theta)$ and $q[i,j]=-\lg \Pr(\text{neg}|\RibbonImage{}[i,j], \theta)$; then the \ac{NLL} of a ribbon is proportional to a sum of $p[i,j]$ for all $i,j$ within the ribbon and $q[i,j]$ for all $i,j$ outside the ribbon. 
-The aim of our \ac{DP} solution is to simultaneously optimize the probability based on color and shape of a ribbon-like feature. 
+The aim of our \ac{DP} solution is to simultaneously optimize the probability based on color and shape of a ribbon-like feature.
+
+As shows in figure \ref{fig:GMM_Sample_2}, we applied a density estimation function to find the probability for each pixel in the ribbon image. 
+For foreground density, we used grey-scale to determine the probability likely-hood for the sidewalk-feature, where white is more likely to be sidewalk and black is less likely. 
+The background density is the opposite, which made black is more likely to be sidewalk and white is not. 
+We use the log likely-hood function to calculate the foreground and background density and estimate density on pixels.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/GMM_SAMPLE2.png}
+    \caption[Density Estimation on Sample Sidewalk]{A sample figure with density estimation applied on figure \ref{fig:Sample_Sidewalk_2}. Where white indicates pixels are more likely to be a sidewalk feature and black indicates pixels are more likely to be a non-sidewalk feature. We separate it into 4 parts from column 1 to 4.}
+    \label{fig:GMM_Sample_2}
+\end{figure}
 
 
 \section{A Dynamic Programming Algorithm}
@@ -157,3 +208,23 @@ The \proc{Backtrack-Ribbon} algorithm selects the least-costly (most probable) r
 
 
 If one wishes the path to be connected in scale-space, then there are only $3\times3$ possible values for $\delta_j, \delta_k$ in line \ref{li:min-from-pred}; so the algorithm is $\Theta(m n^2)$ and used $O(m n^2)$ space, where $m$ is the length of a ribbon and $n=2\MaxDistance+1$ is the maximum thickness of a ribbon. Since $\MaxDistance$ is typically a constant, this algorithm is effectively linear on the length of a ribbon.
+
+We use our dynamic programming algorithm on the ribbon image to find the max score for each pixel that had better probability to be sidewalk feature that we mentioned in Chapter 4. 
+More importantly, we introduce a penalty control function that makes each horizontal movement in the edges or center cost more than vertical movement. Basically, for each line of pixels, if they think the edges or center should shift more horizontally than one pixel compares to the last line, we score them with more penalty. 
+
+Figure \ref{fig:penalty} shows our algorithm managed to separate the driveway and sidewalk under the same feature as penalty increase. So we could apply the dynamic programming solution to locate the precise boundaries of given ribbon image. The penalty control improved our performance significantly. Because of this, our approach could predict the sidewalk under the tree shadow and other shadows or obstacles, which bring us more accurate result compare to other methods.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/penalty.png}
+    \caption[Penalty Process]{Comparison with penalty change, we tested a variety of variables to decide which variable had best performance for width control. With the penalty increased at a reasonable amount, our algorithm decided not to recognize a driveway as sidewalk walk, in order to keep the sidewalk width consistent, even though they are the same texture.}
+    \label{fig:penalty}
+\end{figure}
+
+As shown in figure \ref{fig:sample_result2}, after we generate the result on ribbon image, just need to simply covert the ribbon image back to its original shape by reverse the method that generates the ribbon image. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/sample2_result.png}
+    \caption[Desire Output on Sample Sidewalk]{Detail demonstration on desire result after applying our dynamic programming approach. Where row 1 shows the result after reshape, row 2 to 5 shows the boundaries we calculated on ribbon image from \ref{fig:Sample_Sidewalk_2}.}
+    \label{fig:sample_result2}
+\end{figure}

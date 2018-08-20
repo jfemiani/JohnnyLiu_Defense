@@ -64,7 +64,7 @@ So the idea of width control become necessary.
 \end{figure}
 
 A very successful region growing process is snakes, or Active Contours, which starts with an approximate contour and evolves the boundary to optimize an energy function that favors likely contour shapes. 
-Compared with the other two segmentation tools, active contour may not be the best solution for identifying ribbon-like feature since it is not the best tool to separate blurred edges. 
+Compared with the other two segmentation tools, active contour may not be the best solution for identifying ribbon-like feature since it is not the best tool to separate blurred edges.
 Al-Diri~\cite{ActiveContou09} proposed using active contour to identify each edge separately, in the mean time keep maintaining width consistency. 
 It is a good approach but it is not ideal to apply on our problem, since their ribbon-like feature (vessels) does not requiring predict edges under obstacles, such as trees or cars that above the sidewalk.
 
@@ -81,7 +81,7 @@ In a recent exploration of learning to segment street networks from online maps~
 A similar approach with another deep architecture called U-net~\cite{Ronneberger2015-sv} was applied to the street network segmentation problem~\cite{Zhang2017-gi}.
 These approaches claim to be robust to occlusion and ambiguous regions, but they benefit from a large amount of carefully annotated data that includes road width~\cite{Mnih2013-dp}. 
 This type of pre-annotated data with aligned aerial imagery is much harder to obtain for walking paths. 
-The proposed approach has only handful of tunable parameters with clear interpretations, so that they can be interactively set and used without offline training.
+\ac{DPST} has only handful of tunable parameters with clear interpretations, so that they can be interactively set and used without offline training.
 
 
 % \section{boss paper}
