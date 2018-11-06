@@ -1,19 +1,26 @@
 % Various macros used in the paper
 
+
+
 % The input image (RGB) 
-\newcommand{\image}{M\xspace}
+%\newcommand{\image}{M\xspace}
+\def\InputImage{\ensuremath\vec{X}}
 
 % An indicator random variable
 \newcommand{\indicator}[1]{I_{{#1}}}
 
-%
-\newcommand{\pixelnll}{V\xspace}
+\newcommand{\Color}{\lambda}
 
 %
-\newcommand{\rownll}{D\xspace}
+\newcommand{\pixelnll}{\mathtt{NLL_{pix}}\xspace}
 
 %
-\newcommand{\ribbonnll}{C\xspace}
+\newcommand{\rownll}{\mathtt{NLL_{row}}\xspace}
+
+%
+\newcommand{\ribbonnll}{\mathtt{NLL_{pth}}\xspace}
+
+\def\vec#1{\ensuremath{\mathbf{#1}}}
 
 % The vector x (bold)
 \newcommand{\x}{\mathbf{x}\xspace}
@@ -21,4 +28,18 @@
 % A reference to a figure -- the convention will vary based on where we publish
 % \newcommand{\figref}[1]{\figurename~\ref{#1}}
 
- 
+
+\def\figref#1{Figure~\ref{#1}}
+
+\def\RibbonImage{\ensuremath\vec{W}}
+
+\def\InputTrajectory{\vec{P}}
+\def\OutputTrajectory{\ensuremath{\tau}}
+\def\OutputRadius{\ensuremath{\rho}}
+
+\def\MaxRadius{\ensuremath{k_f}}   % Maximum radius of the ribbon (est)
+\def\MinRadius{\ensuremath{k_n}}   % Minimum radius of the ribbin (est)
+\def\MaxDistance{\ensuremath{k_W}} % Maximim distance from the center of the ribbin (n = 2*\MaxDistance + 1)
+
+\def\GrabCut{GrabCut}
+\def\ActiveContours{Active Contours}

@@ -1,10 +1,9 @@
 \documentclass[12pt, oneside]{book2}
 \usepackage{amssymb, amsmath, amscd, graphicx, fullpage, epstopdf, appendix, hyperref, color, subfig, setspace, tensor, url, verbatim}
 \usepackage{lipsum}
-\usepackage{todonotes}
+%\usepackage{todonotes}
 \usepackage{clrscode3e}
 \usepackage{amsmath}
-\usepackage{todonotes}
 \usepackage{acronym}
 \usepackage{hyperref}
 \usepackage{graphicx}
@@ -16,25 +15,10 @@
 \usepackage{natbib}
 \usepackage{float}
 
-\def\figref#1{Figure~\ref{#1}}
 
-\def\vec#1{\ensuremath{\mathbf{#1}}}
-\def\InputImage{\ensuremath\vec{X}}
-\def\RibbonImage{\ensuremath\vec{W}}
-\def\InputTrajectory{\vec{P}}
-\def\OutputTrajectory{T}
-\def\OutputRadius{R}
-
-\def\MaxRadius{k_f}   % Maximum radius of the ribbon (est)
-\def\MinRadius{k_n}   % Minimum radius of the ribbin (est)
-\def\MaxDistance{k_W} % Maximim distance from the center of the ribbin (n = 2*\MaxDistance + 1)
-
-\def\GrabCut{GrabCut}
-\def\ActiveContours{Active Contours}
-
-% Suppress warnings that we don't care about so that we can focus on the ones that matter
-\usepackage{silence}
-\WarningFilter{latex}{Marginpar on page}  % Caused by margin notes / tracking changes
+%% Suppress warnings that we don't care about so that we can focus on the ones that matter
+%\usepackage{silence}
+%\WarningFilter{latex}{Marginpar on page}  % Caused by margin notes / tracking changes
 
 % Used to keep track of changes that are suggested
 \usepackage[margins]{trackchanges}
@@ -172,7 +156,7 @@ Oxford, Ohio \\
 \include{Chapters/3.Hypothesis/Hypothesis}
 \include{Chapters/3.Hypothesis/Paper}
 \include{Chapters/4.Expect_results/Results}
-\include{Chapters/5.Conclusion/Conclusion}
+%\include{Chapters/5.Conclusion/Conclusion}
 
 % \appendix
 % \include{Appendices/A1}
