@@ -110,13 +110,13 @@ particular offset $j$ and radius $k$ at a single row $(s)$ is
 \end{align}
 
 which combines the probabilities of seeing each color at offset $s$ in the ribbon image conditioned on whether the color is inside or outside of the ribbon.
-However, we assume ribbons are continuous with respect to the position of their mid-line and their thickness, likelihood of the most probable path up to offset $s$ is 
+If we assume ribbons are connected with respect to the position of their mid-line and their thickness, then th likelihood of the most probable path up to offset $s$ is 
 
 \begin{align}
 \ribbonnll(s, j, k) &=  \begin{cases}
 -\ln \Pr(k, j) & \text{if } s = 0\\
    \rownll(s, j, k){+} \\
-   \hspace{1em}\displaystyle\max_{\delta_t,\delta_r} 
+   \hspace{1em}\displaystyle\min_{\delta_t,\delta_r} 
    \left[
    -\ln p(\delta_t{,}\delta_r){+}
    \ribbonnll(s{-}1{,}j{+}\delta_t{,}k{+}\delta_r)

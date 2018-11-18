@@ -79,8 +79,8 @@ missing, inaccurate or invalid data when we rely on the data set for sidewalk lo
 In addition any GIS data may no longer match imagery as structures change over time.
 
 \section{\ac{CRF}} \label{sec:crf}
-\acfp{CRF} are is a class of statistical graphical modeling methods that often applied in pattern recognition and machine learning~\cite{MAL-013}. 
-As a type of discriminative undirected probabilistic graphical model, \acp{CRF} are commonly used for segmenting, labeling or parsing of sequential data, such as in computer vision, structure segmentation and object recognition~\cite{RuizSarmiento2015UPGMppA, 1315232, lafferty2001conditional}. 
+\acfp{CRF} are a class of statistical graphical modeling methods that are often applied in pattern recognition and machine learning~\cite{MAL-013}. 
+\acp{CRF} are commonly used for segmenting, labeling or parsing of sequential data, such as in computer vision, semantic segmentation and object recognition~\cite{RuizSarmiento2015UPGMppA, 1315232, lafferty2001conditional}. 
 For road segmentation, several approaches are able to locate the precise 
 boundaries by treating it as a \ac{CRF} problem~\cite{ActiveContou09, Achanta:149300}. 
 
@@ -109,14 +109,14 @@ $\Pr(R|\lambda)$ that a pixel is part of a ribbon are shown in \figurename{}\ref
 \includegraphics[width=0.85\textwidth]{Figures/GMM_needed.png}
 \caption[Density Background Subtraction]{
 A demonstration of the \ac{EM-GMM} algorithm on sample inputs, probability densities are shown in gray scale. 
-From top to bottom, row 1 shows foreground density on a sample path, row 2 show background density on 
+From top to bottom, row 1 shows foreground density on a sample path, row 2 shows background density on 
 the same sample path as row 1. 
 Row 3 and 4 show the same with a different sample path. 
-A lighter color represents higher probability density.}
+Lighter colors represents higher probability density.}
 \label{fig:gmm_sample_1}
 \end{figure}
 
-\section{\ac{DP}}\label{sec:dp}
+\section{Dynamic Programming}\label{sec:dp}
 
 \acf{DP} is both a mathematical optimization method and a computer programming method \cite{bertsekas2005dynamic}. 
 In 1950s \ac{DP} was invented by Richard Bellman\cite{bellman2013dynamic}. 
@@ -165,7 +165,7 @@ in order to recover the sequence of decisions that led to the optimal value a pr
 Given two strings $t_1=\langle t_{1,1}, t_{1,2}, \dots, t_{1,m}\rangle$
 and $t_2=\langle t_{2,1}, t_{2,2}, \dots, t_{2,n}\rangle$, we aim to identify 
 the \textit{length} of the longest subsequence that is common to both $t_1$ and $t_2$.
-In this case a subproblems are prefixes of the strings $t_1$ and $t_2$.
+In this case subproblems are prefixes of the strings $t_1$ and $t_2$.
 Once we know the lengths of the longest subsequences for every subproblem, we can use 
 backtracking to generate the longest subsequence itself. 
 The longest common sequence is useful for geospatial processing, for example it has been use for intersection detection from GPS

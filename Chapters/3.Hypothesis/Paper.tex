@@ -1,6 +1,8 @@
 \chapter{Detail Experiments on \ac{DPRST}}
 
-The main steps of our approach are illustrated in \figref{fig:Apparatus}; a \ac{VHR} orthorectified image is provided by our sponsor and the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}.
+The main steps of our approach are illustrated in \figref{fig:Apparatus};
+ a \ac{VHR} orthorectified image is provided 
+ and the approximate trajectory of a sidewalk is acquired from a \ac{GIS} such as \ac{OSM}.
 Alternately, an approximate trajectory could be marked by a person to digitize the sidewalk quickly. 
 The initial trajectory is re-sampled and used to warp a portion of aerial image so that the trajectory is mapped to a straight, horizontal line which we call a \textit{ribbon image}. 
 We use a modest assumption that colors near the center of the ribbon image are more likely to be on a walking path in order to build a probability-density estimate for walking path materials. 
@@ -11,8 +13,10 @@ In this section we elaborate the process of generating a ribbon image, estimatin
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{Figures/diagram6.png}
-\caption[Framework Overview]{Our approach adopted to predict precise boundaries for ribbon-like features. Where black line indicated a sidewalk's geometric information, and red lines shown our result for the sidewalk boundaries.
- From (a) to (f), the 6 step approach introduce 
+\caption[Framework Overview]{Our approach adopted to predict precise boundaries for ribbon-like features. 
+Where a black line indicates a sidewalk's geometric information provided as input,
+ and red lines shown our result for the sidewalk boundaries.
+  From (a) to (f), the 6 step approach introduce 
 (a) input map, 
 (b)~initial trajectory, 
 (c)~ribbon image generation, 
@@ -85,26 +89,51 @@ An example of the process is shown in \figref{fig:Sample_Sidewalk_4} and \figref
 % \end{figure}
 
 We develop a way to convert the given sidewalk into a ribbon image. 
-As shown in figure \ref{fig:StraightenProcess}, we use the previous outcome (A) from the last step as input and connected all coordinate points data as the mid-line for the sample sidewalk. 
-Then we apply a smooth function that we created to smooth the mid-line, so the shape of mid-line fits better to the actual sidewalk shape(B). 
-We generate two parallel line as offsets on each side of the mid-line with a distance of twice the average width in between. 
-Ideally even the mid-line is not perfectly laying on the middle, we would still fit the whole sidewalk into the ribbon image. 
-For each point on the mid-line, we connect the corresponding points on both offsets to get the movement of the sidewalk and recorded them(C, D), we generate the straightened ribbon image by using the color data from each pixel in the points set that we record earlier(E). 
-The image data in between each offset, with constant image width could be retrieved after that (F).
-Then we reshape the image data to generate the ribbon image(G). 
+As shown in figure~\ref{fig:StraightenProcess}, we use the input image (\figurename{}\ref{fig:StraightenProcess}~A) 
+and connected all coordinate points data as the mid-line for the sample sidewalk. 
+Then we resample the curve at our desired output resulition (one pixel between each point) 
+and apply a Laplacian smoothing function create a smooth the mid-line, so the shape of 
+midline fits better to the actual sidewalk shape (\figurename{}\ref{fig:StraightenProcess}~B). 
+We generate two parallel line as offsets on each side of the mid-line with a distance of twice 
+our expected maximum thickness of a sidewalk. 
+Ideally even if the mid-line is not perfectly centered on a walking path, we would 
+still fit the whole sidewalk into the ribbon image. 
+For each point on the mid-line, we connect the corresponding points on both offsets to get 
+a cross-section of the sidewalk and then sample each cross section to form a lattice 
+of points (\figurename{}\ref{fig:StraightenProcess}~C,D),
+we generate the straightened ribbon image by using the color data from each pixel in 
+the points set that we record earlier(\figurename{}\ref{fig:StraightenProcess}~E,F).
+We show the resulting grid of color values that result sampling a ribbon in \figurename{}\ref{fig:StraightenProcess}~G.
 Figure \ref{fig:Sample_Sidewalk_2} shows the complete ribbon-image output result on sample sidewalk. We separate it into parts to show better detail. 
+
+Note that warping the input image to form the ribbon image does not necessarily need to be done; 
+the colors can be read from the raw image as needed to implement 
+our algorithm. However the implementation of our dynamic programming solution
+is simpler is we assume our input is a warped image $\RibbonImage{}$
+derived from raw input $\InputImage{}$ using the process described above. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Figures/straghten.pdf}
-    \caption[Ribbon Image Generation]{Ribbon image generating process: from sub-figures A to G, we showed the step by step process to generate ribbon-image from a partial sidewalk. From raw input (A), we smoothed mid line and generated parallel off-site (B). Generated pixels (C) and connected each pixel to its correspond color data from the raw input (D). After gathered pixel data (E), we removed mid-line (F) and generated the ribbon image(G).}
+    \caption[Ribbon Image Generation]{
+    Ribbon image generating process: 
+    from sub-figures A to G, 
+    we show the step by step process to generate ribbon-image 
+    from a partial sidewalk.
+     From raw input (A), we smooth the mid-line and generate parallel offset (B). 
+     Generated pixels (C) and connected each pixel to its correspond color data 
+     from the raw input (D). 
+     After gathering pixel data (E,F) we generate the ribbon image(G).}
     \label{fig:StraightenProcess}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/sample2_demo.png}
-    \caption[Sample Sidewalk 2]{A ribbon image straighten output on sample sidewalk, row 1 shows the original input, row 2 to 5 show the ribbon image output separate into parts.}
+    \caption[Sample Sidewalk 2]{
+    A ribbon image of a sample sidewalk, 
+    row 1 shows the original input, 
+    rows 2 to 5 show the ribbon image output separated into parts to fit on the page.}
     \label{fig:Sample_Sidewalk_2}
 \end{figure}
 
@@ -168,11 +197,20 @@ the sidewalk-feature as gray-scale values, where white is more likely to be side
 
 \section{A Dynamic Programming Algorithm}
 
-We take $\RibbonImage{}$ as an input ribbon image with $m$ rows and $n=2\MaxDistance+1$ columns; $\RibbonImage{}{[i,j]}$ is a pixel in the image. 
-We have an estimate $\Pr(R|\RibbonImage{}_{[i,j]}, \theta)$ which we abbreviate as $p_{[i,j]}$. 
-In addition there is some small set of allowed perturbations $\delta=\{(\delta_j, \delta_k)\}$ where $\delta_j$ is a change in direction and $\delta_k$ is a change in the radius of the ribbon. 
-Each perturbation has a probability $\Pr(\delta_j, \delta_k)$ that controls the shape of the curve; in our experiments we use $\delta_j\in\{-1,0,1\}, \delta_k\in\{-1, 0,1\}$ in order to ensure that results are connected, and  $\Pr(\delta_j, \delta_k)=\Pr(|\delta_j|)\Pr(\delta_k)$ is two independent multinomial distributions which require only three parameters due to symmetry and because probabilities sum to unity. 
-We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bending the curve, and $c_\mathit{shrink}=-\lg \Pr(\delta_k=-1)$ as a penalty for shrinking the radius, or $c_\mathit{expand} = -\lg \Pr(\delta_k=1)$ as a penalty for expanding the radius of the curve. 
+We take $\RibbonImage{}$ as an input ribbon image with $m$ rows and $n=2\MaxDistance+1$ columns;
+ $\RibbonImage{}{[i,j]}$ is a pixel in the image. 
+We have an estimate $\Pr(R|\RibbonImage{}{[i,j]}, \theta)$ which we abbreviate as $p_{[i,j]}$. 
+In addition there is some small set of allowed perturbations 
+$\delta=\{(\delta_j, \delta_k)\}$ where $\delta_j$ is a change in direction 
+and $\delta_k$ is a change in the radius of the ribbon. 
+Each perturbation has a probability $\Pr(\delta_j, \delta_k)$ that controls 
+the shape of the curve; in our experiments we use $\delta_j\in\{-1,0,1\}, \delta_k\in\{-1, 0,1\}$ in order 
+to ensure that results are connected, and  $\Pr(\delta_j, \delta_k)=\Pr(|\delta_j|)\Pr(\delta_k)$ is 
+two independent multinomial distributions which require only three parameters due to symmetry 
+and because probabilities sum to one. 
+We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bending the 
+curve, and $c_\mathit{shrink}=-\lg \Pr(\delta_k=-1)$ as a penalty for shrinking the radius,
+ or $c_\mathit{expand} = -\lg \Pr(\delta_k=1)$ as a penalty for expanding the radius of the curve. 
 
 % \begin{figure}[H]
 %     \centering
@@ -181,11 +219,33 @@ We can interpret $c_\mathit{bend}=-\lg \Pr(\delta_j=\pm1)$ as a penalty for bend
 %     \label{fig:3d_ribbon_top}
 % \end{figure}
 
-We visualize the problem of finding a ribbon as one of choosing a three-dimensional path through a scale-space where the first two dimensions represent locations of the ribbon's center, and the third dimension represent the thickness of the ribbon as illustrated in \figref{fig:ribbon_3d}. Every ribbon must start at one end of the image and follow a three-dimensional path through scale-space to reach the other end one slice at a time. Each slice corresponds to a row of the ribbon image and a point at location $(j, k)$ in the slice partitions the row into negative regions $(0\twodots{}j-k-1)$ and $(j+k+1\twodots{}n)$ with a positive region at $(j-k \twodots{} j+k)$ with thickness $2k+1$. The likelihood of any location $(j, k)$ is the product of the probabilities that each pixel on the same row belongs to the corresponding positive or negative regions.  In fact the probability is exponentially related to the size of each pixel; if one were to increase the resolution by a factor of $r$ then the contribution of each pixel would be raised to the power of $\frac{1}{r}$ so that the product would stay constant. In order to make our parameters invariant to scale, we divide the \ac{NLL} by $\MaxDistance{}$ when estimating the likelihood of a given $(j,k)$. 
+We visualize the problem of finding a ribbon as one of choosing a three-dimensional path through a
+scale-space where the first two dimensions represent locations of the ribbon's center, and the third
+dimension represent the thickness of the ribbon as illustrated in \figref{fig:ribbon_3d}. Every
+ribbon must start at one end of the image and follow a three-dimensional path through scale-space to
+reach the other end, one slice at a time. Each slice corresponds to a row of the ribbon image and a
+point at location $(j, k)$ in the slice partitions the row into negative regions
+$(0\twodots{}j-k-1)$ and $(j+k+1\twodots{}n)$ with a positive region at $(j-k \twodots{} j+k)$ with
+thickness $2k+1$. The likelihood of a ribbon centered at any location $(j, k)$ of row $i$ is the product of the probabilities that
+each pixel on the same row belongs to the corresponding positive or negative regions.  In fact the
+probability is exponentially related to the size of each pixel; if one were to increase the
+resolution by a factor of $r$ then the contribution of each pixel would be raised to the power of
+$\frac{1}{r}$ so that the product would stay constant. In order to make our parameters invariant to
+scale, we divide the \ac{NLL} by $\MaxDistance{}$ when estimating the likelihood of a given $(j,k)$.
 
-We model the probability of a ribbon as the product of the probability of each location $(i, j, k)$ along the path times the probability of each edge from slice $i$ to slice $i+1$. We use dynamic programming to search to a path that minimizes the \ac{NLL} (the cost) of a path in procedure \proc{Segment-Ribbon}.
+We model the probability of a ribbon as the product of the probability of each location $(i, j, k)$
+along the path times the probability of each edge from slice $i$ to slice $i+1$. We use dynamic
+programming to search to a path that minimizes the \ac{NLL} (the cost) of a path in procedure
+\proc{Segment-Ribbon}.
 
-The pseudocode can be interpreted as follows: Line \ref{li:loop-slices} iterates through each slice of the ribbon image. Line \ref{li:loop-radius} iterates through all possible radii and line \ref{li:loop-center} explores all possible ribbon-centers from left to right. We use a variable $s$ to calculate \ac{NLL} of a set of regions as the ribbon shifts from left to right. If this is not the first slice, then line \ref{li:min-from-pred} selects the least-expensive (most probable) path that leads to location $(i, j, k)$ in the scale space.  At each step on pixel toggles from negative to positive, and one toggles from positive to negative as $s$ is updated in line \ref{li:update-s}.  We return the costs as well as the final offset and scale $(j^*, k^*)$ of the best path. 
+The pseudocode can be interpreted as follows: Line \ref{li:loop-slices} iterates through each slice
+of the ribbon image. Line \ref{li:loop-radius} iterates through all possible radii and line
+\ref{li:loop-center} explores all possible ribbon-centers from left to right. We use a variable $s$
+to calculate \ac{NLL} of a set of regions as the ribbon shifts from left to right. If this is not
+the first slice, then line \ref{li:min-from-pred} selects the least-expensive (most probable) path
+that leads to location $(i, j, k)$ in the scale space.  At each step one pixel toggles from negative
+to positive, and one toggles from positive to negative as $s$ is updated in line \ref{li:update-s}. 
+We return the costs as well as the final offset and scale $(j^*, k^*)$ of the best path.
 
 
 \begin{codebox}
@@ -239,17 +299,23 @@ If one wishes the path to be connected in scale-space, then there are only $3\ti
 
 Figure \ref{fig:penalty} shows our algorithm managed to separate the driveway and sidewalk under the same feature as penalty increase. So we could apply the dynamic programming solution to locate the precise boundaries of given ribbon image. The penalty control improved our performance significantly. Because of this, our approach could predict the sidewalk under the tree shadow and other shadows or obstacles, which bring us more accurate result compare to other methods.
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{Figures/penalty.png}
-    \caption[Penalty Process]{Comparison with penalty change, we tested a variety of variables to decide which variable had best performance for width control. With the penalty increased at a reasonable amount, our algorithm decided not to recognize a driveway as sidewalk walk, in order to keep the sidewalk width consistent, even though they are the same texture.}
-    \label{fig:penalty}
+    \centering \includegraphics[width=\textwidth]{Figures/penalty.png} \caption[Penalty
+    Process]{Comparison with penalty change, we tested a variety of variables to decide which
+    variable had best performance for width control. With the penalty increased sufficiently,
+     our algorithm bypasses the sidewalk in order to keep the thickness of the
+    sidewalk width consistent, even though the sidewalk and driveway are the same texture.} \label{fig:penalty}
 \end{figure}
 
-As shown in figure \ref{fig:sample_result2}, after we generate the result on ribbon image, just need to simply covert the ribbon image back to its original shape by reverse the method that generates the ribbon image. 
+As shown in figure \ref{fig:sample_result2}, after we generate the result on ribbon image, just need
+to simply convert the ribbon image back to its original shape by reversing the method that generated
+the ribbon image.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/sample2_result.png}
-    \caption[Desire Output on Sample Sidewalk]{Detail demonstration on desire result after applying our dynamic programming approach. Where row 1 shows the result after reshape, row 2 to 5 shows the boundaries we calculated on ribbon image from \ref{fig:Sample_Sidewalk_2}.}
+    \caption[Output on a Sample Sidewalk]{
+    Detailed demonstration of the result after applying our dynamic programming approach.
+     Where row 1 shows the result after reshape, rows 2 to 5 show the boundaries 
+     we calculated on the ribbon image from \ref{fig:Sample_Sidewalk_2}.}
     \label{fig:sample_result2}
 \end{figure}

@@ -1,6 +1,6 @@
 \chapter{Related Work}
 
-We now turn our attention to competing prior art that would seem to address the same or a similar problem to the proposed approach. 
+The previous section provided background; we now turn our attention to competing prior art that would seem to address the same or a similar problem to the proposed approach. 
 A variety of approaches are able to locate precise object boundaries, although few directly address
 the problem of sidewalk segmentation. Several tools for segmentation
 appear for segmenting features in \ac{VHR}, we list Grabcut ~\cite{Rother2004-ou},
@@ -67,14 +67,15 @@ segmentation can be accomplished by grouping super-pixels which snap to natural 
 image. Alternatively, super-pixels can initiate a region growing process~\cite{Borovec2017-fz}. As
 shown in figure \ref{fig:slic}, \ac{SLIC} will identify a non-sidewalk feature as positive if there
 is a shadow covering the sidewalk, which may lead to over mark the boundary (\acp{FP}). 
-The results we show \ac{SLIC} segmentation are superpixels that cross the original \ac{GIS} line strip.
+The results we show as \ac{SLIC} segmentation are superpixels that cross the original \ac{GIS} line strip.
 When strong edges exist within the sidewalk (e.g. from shadows or occlusion) the \ac{SLIC} approach may
  fail to recognize part of the sidewalk (if the superpixel does not cross the line strip) or it may 
  detect objects that extend outside the sidewalk (if the superpixel crosses the line strip). 
-Thus, finding a way to separate such a feature become
+Thus, finding a way to separate such a feature becomes
 important. Trying to decrease the size or the width of each super-pixel is one of the ways to fix
-it but may cause an incompleteness since each super-pixel is smaller than the width of the sidewalk.
-So the idea of width control become necessary.
+this problem, but reducing the sizes of superpixels may result in poor recall of sidewalk pixels 
+since each super-pixel is smaller than the width of the sidewalk.
+
 
 \section{Active Contours}
 
@@ -82,8 +83,8 @@ So the idea of width control become necessary.
 \centering
 \includegraphics[width=\textwidth]{Figures/ac1.png}
 \caption[Example of Active Contours]{
-Detail demonstration of the \ActiveContours{} method. 
-Row 2 indicates examples of false positive, which is recognized a non-sidewalk feature 
+A detailed demonstration of the \ActiveContours{} method. 
+Row 2 indicates examples of false positives, which recognized a non-sidewalk feature 
 (shadow) and similar texture (driveway) as a part of sidewalk.}
 \label{fig:ac}
 \end{figure}
@@ -98,18 +99,18 @@ since their ribbon-like feature (vessels) does not requiring predict edges under
 
 
 Both \ac{SLIC} and active contours start from an initial shape to find precise boundaries by solving a \ac{CRF} problem. 
-In addition, graph cut are capable of global \ac{CRF} optimization in some situations, and iterative graph cut are used by the GrabCut algorithm to refine an initial segmentation~\cite{Rother2004-ou}. However in figure \ref{fig:Method_comparison} and figure \ref{fig:ac}, we show the segmentation results of these methods, and note that they struggle to constrain their results to ribbon-like shapes with smooth thickness and mid-line.
+In addition, graph cuts are capable of global \ac{CRF} optimization in some situations, and iterative graph cut are used by the GrabCut algorithm to refine an initial segmentation~\cite{Rother2004-ou}. However in figure \ref{fig:Method_comparison} and figure \ref{fig:ac}, we show the segmentation results of these methods, and note that they struggle to constrain their results to ribbon-like shapes with smooth thickness and mid-line.
 These color or boundary smoothness methods fail to capture an important quality of ribbon-like features, which is the thickness at one point depends not only its adjacent points but also its topologically distant points along the contour.
 
-\section{\ac{CNNs}}
+\section{Convolutional Neural Networks}
 
 Another image segmentation approach that has seen extraordinary success is the use of Convolutional Neural Networks (CNNs) and transposed convolution~\cite{Badrinarayanan2017-il, Noh2015-ni, Shelhamer2017-rf, Ronneberger2015-sv}. 
 Unlike the proposed approach, these have millions of tunable parameters and need significant pre-annotated data and offline training to build a model. 
-In a recent exploration of learning to segment street networks from online maps~\cite{Kaiser2017-np}, built a fully convolutional network with 137 million parameters.
+In a recent exploration of learning to segment street networks from online maps, Kaiser et al.~\cite{Kaiser2017-np} built a fully convolutional network with 137 million parameters.
 A similar approach with another deep architecture called U-net~\cite{Ronneberger2015-sv} was applied to the street network segmentation problem~\cite{Zhang2017-gi}.
 These approaches claim to be robust to occlusion and ambiguous regions, but they benefit from a large amount of carefully annotated data that includes road width~\cite{Mnih2013-dp}. 
 This type of pre-annotated data with aligned aerial imagery is much harder to obtain for walking paths. 
-\ac{DPRST} has only handful of tunable parameters with clear interpretations, so that they can be interactively set and used without offline training.
+The proposed \ac{DPRST} approach has only a few tunable parameters with clear interpretations, so that they can be interactively set and used without offline training.
 
 
 % \section{boss paper}

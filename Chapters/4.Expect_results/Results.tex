@@ -13,13 +13,19 @@ where
 \acp{FN} is the number incorrectly marked as negative and 
 \acp{FP} is the number incorrectly marked as positive. 
 
-We compare our results against common segmentation approaches 
-\ac{SLIC}~\cite{Achanta:149300}, \ActiveContours{}~\cite{ActiveContou09} and \GrabCut{}~\cite{Rother2004-ou} 
-in Table~\ref{tab:quantitative-against-common} using a manually annotated region of 
-Phoenix AZ. The test region was acquired as \ac{VHR} 4-inch aerial orthophotos, 
-and manually annotated by drawing a polygonal outline. 
-When a portion of the sidewalk was occluded or camouflage with the surrounding pavement 
-(including gutters) we used our best judgment to connect the visible portions of the sidewalk. For all of of the examples we present, with figure \ref{fig:change_on_recall} that shows detail parameters evaluations, we set $c_\mathit{bend}=\frac{1}{2}, c_\mathit{shrink}=c_\mathit{expand}=2$ which were experimentally found to produce the best result. Note that in our implementation we did not take care to ensure that $\Pr(\delta_k)$ summed to unity, and instead assumed that $-\lg \Pr(\delta_k=0)$ was zero, which does not have a probabilistic interpretation but is more convenient for computation. 
+We compare our results against common segmentation approaches \ac{SLIC}~\cite{Achanta:149300},
+\ActiveContours{}~\cite{ActiveContou09} and \GrabCut{}~\cite{Rother2004-ou} in
+Table~\ref{tab:quantitative-against-common} using a manually annotated region of Phoenix AZ. The
+test region was acquired as \ac{VHR} 4-inch aerial orthophotos, and manually annotated by drawing a
+polygonal outline. When a portion of the sidewalk was occluded or camouflage with the surrounding
+pavement (including gutters) we used our best judgment to connect the visible portions of the
+sidewalk. For all of of the examples we present we set $c_\mathit{bend}=\frac{1}{2},
+c_\mathit{shrink}=c_\mathit{expand}=2$ which were experimentally found to produce the best result. 
+Figure \ref{fig:change_on_recall} that shows detailed parameter evaluation for
+ $c_\mathit{bend},c_\mathit{shrink}$, and $c_\mathit{expand}$. 
+Note that in our implementation we did not take care to ensure that $\Pr(\delta_k)$ summed to unity,
+and instead assumed that $-\lg \Pr(\delta_k=0)$ was zero, which does not have a probabilistic
+interpretation but is more convenient for computation.
 
 \begin{table}[h!]
     \caption{Quantitative comparison. }
@@ -42,7 +48,8 @@ For qualitative comparison we compare against \ac{SLIC}, \ActiveContours{}, and 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Figures/prf.png}
-    \caption[Parameters Evaluation]{Detail comparison on $c_{bend}$, $c_{shrink}$ and $c_{expand}$. Where red line represent Recall, green line represent Precision and blue line represent F1. We generate these based on equations from Recall (6.2), Precision (6.1), F1 (6.3).}
+    \caption[Parameters Evaluation]{Detail comparison on $c_{bend}$, $c_{shrink}$ and $c_{expand}$.
+     Where red lines represent Recall, green lines represent Precision and blue lines represent F1.}
     \label{fig:change_on_recall}
 \end{figure}
 
